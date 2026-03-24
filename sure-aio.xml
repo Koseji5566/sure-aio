@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>Sure-AIO</Name>
+  <Repository>ghcr.io/jsonbored/sure-aio:latest</Repository>
+  <Registry>ghcr.io/jsonbored/sure-aio</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/JSONbored/sure-aio/issues</Support>
+  <Project>https://github.com/we-promise/sure</Project>
+  <Overview>Sure (formerly Maybe Finance) is a personal finance app for everyone.&#xD;
+&#xD;
+[b]All-In-One (AIO) Edition[/b]&#xD;
+This template uses a custom image by JSONbored that consolidates the Rails Web Server and Sidekiq Worker into a single container using s6-overlay. Simplifies deployment significantly.&#xD;
+&#xD;
+[b]Dependencies:[/b]&#xD;
+1. Postgres 16+ Database (external container)&#xD;
+2. Redis 5.4+ (external container)&#xD;
+&#xD;
+[b]Setup:[/b]&#xD;
+1. Create a `sure` database and user in your Postgres instance.&#xD;
+2. Generate a `SECRET_KEY_BASE` (run `openssl rand -hex 64` in terminal).&#xD;
+3. Configure the variables below.</Overview>
+  <Category>Tools: Finance: Productivity:</Category>
+  <WebUI>http://[IP]:[PORT:3000]</WebUI>
+  <TemplateURL>https://github.com/JSONbored/awesome-unraid/raw/master/sure-aio.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/JSONbored/awesome-unraid/master/icons/sure.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Description>Sure (formerly Maybe Finance) is a personal finance app for everyone.&#xD;
+&#xD;
+[b]All-In-One (AIO) Edition[/b]&#xD;
+This template uses a custom image by JSONbored that consolidates the Rails Web Server and Sidekiq Worker into a single container using s6-overlay. Simplifies deployment significantly.&#xD;
+&#xD;
+[b]Dependencies:[/b]&#xD;
+1. Postgres 16+ Database (external container)&#xD;
+2. Redis 5.4+ (external container)&#xD;
+&#xD;
+[b]Setup:[/b]&#xD;
+1. Create a `sure` database and user in your Postgres instance.&#xD;
+2. Generate a `SECRET_KEY_BASE` (run `openssl rand -hex 64` in terminal).&#xD;
+3. Configure the variables below.</Description>
+  <Networking>
+    <Mode>bridge</Mode>
+    <Publish>
+      <Port>
+        <HostPort>3000</HostPort>
+        <ContainerPort>3000</ContainerPort>
+        <Protocol>tcp</Protocol>
+      </Port>
+    </Publish>
+  </Networking>
+  <Data>
+    <Volume>
+      <HostDir>/mnt/user/appdata/sure/storage</HostDir>
+      <ContainerDir>/rails/storage</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+  </Data>
+  <Environment>
+    <Variable>
+      <Value>true</Value>
+      <Name>SELF_HOSTED</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>production</Value>
+      <Name>RAILS_ENV</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value/>
+      <Name>SECRET_KEY_BASE</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>postgres-shared</Value>
+      <Name>DB_HOST</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>5432</Value>
+      <Name>DB_PORT</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>sure</Value>
+      <Name>POSTGRES_DB</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>sure_user</Value>
+      <Name>POSTGRES_USER</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value/>
+      <Name>POSTGRES_PASSWORD</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>redis://redis-shared:6379/1</Value>
+      <Name>REDIS_URL</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>false</Value>
+      <Name>RAILS_FORCE_SSL</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>true</Value>
+      <Name>RAILS_ASSUME_SSL</Name>
+      <Mode/>
+    </Variable>
+  </Environment>
+  <Config Name="Web UI Port" Target="3000" Default="3000" Mode="tcp" Description="The main web interface port." Type="Port" Display="always" Required="true" Mask="false">3000</Config>
+  <Config Name="App Storage" Target="/rails/storage" Default="/mnt/user/appdata/sure/storage" Mode="rw" Description="Persistent storage for uploads and assets." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/sure/storage</Config>
+  <Config Name="Secret Key Base" Target="SECRET_KEY_BASE" Default="" Mode="" Description="Critical: Run 'openssl rand -hex 64' to generate this key. Do not share." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Database Host" Target="DB_HOST" Default="postgres-shared" Mode="" Description="Hostname of your Postgres database container." Type="Variable" Display="always" Required="true" Mask="false">postgres-shared</Config>
+  <Config Name="Database Port" Target="DB_PORT" Default="5432" Mode="" Description="Port for Postgres." Type="Variable" Display="always" Required="true" Mask="false">5432</Config>
+  <Config Name="Database Name" Target="POSTGRES_DB" Default="sure" Mode="" Description="Name of the database to use." Type="Variable" Display="always" Required="true" Mask="false">sure</Config>
+  <Config Name="Database User" Target="POSTGRES_USER" Default="sure_user" Mode="" Description="Database username." Type="Variable" Display="always" Required="true" Mask="false">sure_user</Config>
+  <Config Name="Database Password" Target="POSTGRES_PASSWORD" Default="" Mode="" Description="Database password." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Redis URL" Target="REDIS_URL" Default="redis://redis-shared:6379/1" Mode="" Description="Full connection string for Redis (e.g., redis://host:port/db)." Type="Variable" Display="always" Required="true" Mask="false">redis://redis-shared:6379/1</Config>
+  <Config Name="Self Hosted Mode" Target="SELF_HOSTED" Default="true" Mode="" Description="Enables self-hosted features." Type="Variable" Display="advanced" Required="true" Mask="false">true</Config>
+  <Config Name="Rails Env" Target="RAILS_ENV" Default="production" Mode="" Description="Run in production mode." Type="Variable" Display="advanced" Required="true" Mask="false">production</Config>
+  <Config Name="Force SSL" Target="RAILS_FORCE_SSL" Default="false" Mode="" Description="Set to true only if handling SSL internally (usually handled by Reverse Proxy)." Type="Variable" Display="advanced" Required="true" Mask="false">false</Config>
+  <Config Name="Assume SSL" Target="RAILS_ASSUME_SSL" Default="true" Mode="" Description="Set to true if using a reverse proxy with HTTPS." Type="Variable" Display="advanced" Required="true" Mask="false">true</Config>
+</Container>

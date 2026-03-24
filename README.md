@@ -1,6 +1,6 @@
 <div align="center">
 
-# Sure AIO (All-in-One) for Unraid
+# Sure AIO (All-in-One) for Unraid 💸
 
 [![Docker Image Size](https://img.shields.io/docker/image-size/jsonbored/sure-aio/latest?color=blue&label=Image%20Size)](https://github.com/JSONbored/sure-aio/pkgs/container/sure-aio)
 [![GitHub License](https://img.shields.io/github/license/we-promise/sure?color=green)](https://github.com/we-promise/sure/blob/main/LICENSE)
@@ -46,11 +46,11 @@ While designed for absolute beginners, this container does not neuter the upstre
 If you click **"Show more settings..."** in the Unraid template, you can customize the system violently. 
 
 Read the comprehensive [Power User Guide here](docs/power-user.md) for instructions on how to configure:
-1. **Local AI / Ollama Integration:** (Replace OpenAI with your own LLM for categorization).
-2. **External OpenClaw / MCP Agent Routing:** (Bypass the built-in bot).
-3. **AWS S3 / Cloudflare R2 Storage:** (Offload receipt/statement uploads).
-4. **External Database Overrides:** (Don't want to use our internal Postgres? Wire it up to your dedicated DB server).
-5. **SMTP Mail Relays & OIDC Single Sign-On.**
+- **[Local AI / Ollama Integration](docs/power-user.md#2-artificial-intelligence-categorization--chat):** Replace OpenAI with your own LLM for categorization.
+- **[External OpenClaw / MCP Agent Routing](docs/power-user.md#option-b-external-agent-routing-openclaw--mcp):** Bypass the built-in bot entirely.
+- **[AWS S3 / Cloudflare R2 Storage](docs/power-user.md#4-offloading-storage-to-s3--cloudflare-r2--minio):** Offload receipt and statement uploads.
+- **[External Database Overrides](docs/power-user.md#1-using-an-external-database-bypassing-aio-internals):** Don't want to use our internal Postgres? Wire it up to your dedicated DB server.
+- **[Enterprise Auth & SMTP](docs/power-user.md#6-enterprise-setup-oidc--email):** Set up SSO and password recovery emails.
 
 ## 💾 Data Persistence
 Even though the databases roar silently inside the container, their data is mapped physically to your Unraid cache drive. **You will not lose data when updating the container.**
@@ -65,3 +65,7 @@ Just make sure `/mnt/user/appdata/sure-aio` is covered by your standard Unraid C
 - The underlying application code is maintained by the incredible [community at we-promise/sure](https://github.com/we-promise/sure). 
 - The Sure codebase is licensed under **AGPLv3**.
 - This specific Dockerfile deployment wrapper (the AIO architecture) is provided by JSONbored to ease deployment burdens on Unraid.
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=JSONbored/sure-aio&type=date&legend=top-left)](https://www.star-history.com/#JSONbored/sure-aio&type=date&legend=top-left)

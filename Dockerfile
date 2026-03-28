@@ -9,7 +9,7 @@ USER root
 # 1. Install prerequisites, s6-overlay, PostgreSQL, and Redis
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl xz-utils sudo \
-    postgresql-15 postgresql-client-15 redis-server && \
+    postgresql postgresql-client redis-server && \
     curl -L -o /tmp/s6-overlay-noarch.tar.xz https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz && \
     tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
     curl -L -o /tmp/s6-overlay-x86_64.tar.xz https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz && \

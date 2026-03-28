@@ -1,2 +1,3 @@
 #!/command/with-contenv sh
-exec s6-setuidgid postgres /usr/lib/postgresql/15/bin/postgres -D /var/lib/postgresql/data -c listen_addresses='localhost'
+PG_VERSION=$(ls /usr/lib/postgresql)
+exec s6-setuidgid postgres /usr/lib/postgresql/$PG_VERSION/bin/postgres -D /var/lib/postgresql/data -c listen_addresses='localhost'

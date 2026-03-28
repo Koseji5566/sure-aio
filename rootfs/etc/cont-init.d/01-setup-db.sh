@@ -17,13 +17,13 @@ PGDATA="/var/lib/postgresql/data"
 if [ -z "$(ls -A "$PGDATA")" ]; then
     echo "Initializing PostgreSQL database..."
     chown -R postgres:postgres "$PGDATA"
-    sudo -u postgres /usr/lib/postgresql/15/bin/initdb -D "$PGDATA"
+    sudo -u postgres /usr/lib/postgresql/$(ls /usr/lib/postgresql)/bin/initdb -D "$PGDATA"
     
     # Temporarily start PG to create the sure_user
-    sudo -u postgres /usr/lib/postgresql/15/bin/pg_ctl -D "$PGDATA" -w start
+    sudo -u postgres /usr/lib/postgresql/$(ls /usr/lib/postgresql)/bin/pg_ctl -D "$PGDATA" -w start
     sudo -u postgres psql -c "CREATE USER sure_user WITH SUPERUSER PASSWORD 'internal_sure_pass';"
     sudo -u postgres psql -c "CREATE DATABASE sure_production OWNER sure_user;"
-    sudo -u postgres /usr/lib/postgresql/15/bin/pg_ctl -D "$PGDATA" -m fast -w stop
+    sudo -u postgres /usr/lib/postgresql/$(ls /usr/lib/postgresql)/bin/pg_ctl -D "$PGDATA" -m fast -w stop
 else
     echo "PostgreSQL database already initialized."
 fi

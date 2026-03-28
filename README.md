@@ -69,3 +69,12 @@ Just make sure `/mnt/user/appdata/sure-aio` is covered by your standard Unraid C
 ## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=JSONbored/sure-aio&type=date&legend=top-left)](https://www.star-history.com/#JSONbored/sure-aio&type=date&legend=top-left)
+---
+
+## 👨‍💻 About the Creator
+
+Built with 🖤 by **[JSONbored](https://github.com/JSONbored)**.
+
+- 🌐 **Portfolio & Services:** [aethereal.dev](https://aethereal.dev)
+- 📅 **Book a Call:** [cal.com/aethereal](https://cal.com/aethereal) 
+- ☕ **Support my work:** [Sponsor on GitHub](https://github.com/sponsors/JSONbored)

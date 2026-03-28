@@ -40,7 +40,7 @@ jobs:
           
       - name: Build and push
         id: build
-        uses: docker/build-push-action@2cdde99a3119bf7410cdd40de1e52ee3e3b0b5fe # v6.0.0
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.0.0
         with:
           context: .
           platforms: linux/amd64,linux/arm64

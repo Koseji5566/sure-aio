@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Install git-cliff
         env:
@@ -86,6 +87,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Determine release version
         id: version
@@ -133,6 +135,7 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local --unset-all http.https://github.com/.extraheader || true
           git tag "${RELEASE_VERSION}" "${RELEASE_COMMIT}"
           git push "https://x-access-token:${auth_token}@github.com/${GITHUB_REPOSITORY}.git" "${RELEASE_VERSION}"
 

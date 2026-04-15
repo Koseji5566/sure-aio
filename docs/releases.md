@@ -40,5 +40,5 @@ You can run the same workflow with `action=full` for one-dispatch orchestration:
 
 Notes:
 
-- `action=full` requires `auto_merge_release_pr=true` (default).
-- If branch protection/policy blocks auto-merge, the workflow fails with a clear message and no partial hidden state.
+- `action=full` defaults `auto_merge_release_pr=true` and will attempt GitHub auto-merge first.
+- If repository auto-merge is disabled, the workflow automatically falls back to direct merge polling and proceeds once required checks/policies allow merge.

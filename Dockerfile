@@ -1,7 +1,7 @@
-# syntax=docker/dockerfile:1@sha256:4a43a54dd1fedceb30ba47e76cfcf2b47304f4161c0caeac2db1c61804ea3c91
+# syntax=docker/dockerfile:1@sha256:2780b5c3bab67f1f76c781860de469442999ed1a0d7992a5efdf2cffc0e3d769
 
 ARG UPSTREAM_VERSION=v0.6.9
-ARG UPSTREAM_IMAGE_DIGEST=sha256:3d899b3eced520d8d3166a3d53184cbb1356670fb52d050f94f8e62e59754d70
+ARG UPSTREAM_IMAGE_DIGEST=sha256:f415c4085489b4e154f2374786fd604b41ff11d3f56b6d1050fa28fa214f1130
 ARG PGVECTOR_VERSION=0.8.2
 FROM ghcr.io/we-promise/sure@${UPSTREAM_IMAGE_DIGEST}
 
@@ -52,6 +52,8 @@ RUN find /etc/s6-overlay/s6-rc.d -type f \( -name "run" -o -name "up" \) -exec c
 
 # 4. Expose the App Storage
 VOLUME ["/rails/storage", "/var/lib/postgresql/data", "/var/lib/redis"]
+
+ENV SKYLIGHT_ENABLED=false
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:3000/up || exit 1

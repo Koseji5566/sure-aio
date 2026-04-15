@@ -176,12 +176,20 @@ jobs:
       - name: Trigger image publish workflow
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ steps.version.outputs.release_version }}
         run: |
+          release_revision="${RELEASE_VERSION##*.}"
+          if [[ ! "${release_revision}" =~ ^[0-9]+$ ]]; then
+            echo "Could not parse revision from release version ${RELEASE_VERSION}" >&2
+            exit 1
+          fi
+          aio_track="aio-v${release_revision}"
           gh workflow run "CI / Sure-AIO" \
             --ref main \
             -f publish_image=true \
-            -f run_smoke_test=false
-          echo "Triggered CI / Sure-AIO workflow_dispatch with publish_image=true."
+            -f run_smoke_test=false \
+            -f aio_track_override="${aio_track}"
+          echo "Triggered CI / Sure-AIO workflow_dispatch with publish_image=true and aio_track_override=${aio_track}."
 
   full-release:
     if: ${{ github.event.inputs.action == 'full' && github.ref == 'refs/heads/main' }}
@@ -256,14 +264,8 @@ jobs:
           branch: "release/${{ steps.prepare_version.outputs.release_version }}"
           delete-branch: true
 
-      - name: Require auto-merge for full mode
-        if: steps.changes.outputs.has_changes == 'true' && env.AUTO_MERGE != 'true'
-        run: |
-          echo "full mode requires auto_merge_release_pr=true to complete in one dispatch." >&2
-          exit 1
-
-      - name: Enable release PR auto-merge
-        if: steps.changes.outputs.has_changes == 'true' && env.AUTO_MERGE == 'true'
+      - name: Merge release PR
+        if: steps.changes.outputs.has_changes == 'true'
         env:
           RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -275,32 +277,53 @@ jobs:
             exit 1
           fi
           export GH_TOKEN="${auth_token}"
-          gh pr merge "${PR_NUMBER}" --squash --delete-branch --auto
-          echo "Auto-merge enabled for release PR #${PR_NUMBER}."
 
-      - name: Wait for release PR merge
-        if: steps.changes.outputs.has_changes == 'true' && env.AUTO_MERGE == 'true'
-        env:
-          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ steps.release_pr.outputs.pull-request-number }}
-        run: |
-          auth_token="${RELEASE_TOKEN:-${GITHUB_TOKEN}}"
-          if [[ -z "${auth_token}" ]]; then
-            echo "No token available for PR merge polling." >&2
-            exit 1
+          if [[ "${AUTO_MERGE}" == "true" ]]; then
+            set +e
+            auto_output="$(gh pr merge "${PR_NUMBER}" --squash --delete-branch --auto 2>&1)"
+            auto_status=$?
+            set -e
+            if [[ ${auto_status} -eq 0 ]]; then
+              echo "Auto-merge enabled for release PR #${PR_NUMBER}."
+            elif echo "${auto_output}" | grep -q "enablePullRequestAutoMerge"; then
+              echo "Repository auto-merge is disabled; falling back to direct merge polling."
+            else
+              echo "${auto_output}" >&2
+              exit ${auto_status}
+            fi
           fi
-          export GH_TOKEN="${auth_token}"
+
           deadline=$((SECONDS + 1800))
+          last_error=""
           while (( SECONDS < deadline )); do
             merged_at="$(gh pr view "${PR_NUMBER}" --json mergedAt --jq '.mergedAt')"
             if [[ "${merged_at}" != "null" && -n "${merged_at}" ]]; then
               echo "Release PR #${PR_NUMBER} merged at ${merged_at}."
               exit 0
             fi
-            sleep 10
+
+            set +e
+            merge_output="$(gh pr merge "${PR_NUMBER}" --squash --delete-branch 2>&1)"
+            merge_status=$?
+            set -e
+            if [[ ${merge_status} -eq 0 ]]; then
+              echo "Merged release PR #${PR_NUMBER}."
+              exit 0
+            fi
+
+            last_error="${merge_output}"
+            if echo "${merge_output}" | grep -Eqi "not mergeable|required|check|review|policy|head branch"; then
+              sleep 15
+              continue
+            fi
+
+            sleep 15
           done
-          echo "Timed out waiting for release PR #${PR_NUMBER} to merge." >&2
+
+          echo "Timed out waiting to merge release PR #${PR_NUMBER}." >&2
+          if [[ -n "${last_error}" ]]; then
+            echo "${last_error}" >&2
+          fi
           exit 1
 
       - name: Refresh checkout after release merge
@@ -385,9 +408,17 @@ jobs:
       - name: Trigger image publish workflow
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ steps.version.outputs.release_version }}
         run: |
+          release_revision="${RELEASE_VERSION##*.}"
+          if [[ ! "${release_revision}" =~ ^[0-9]+$ ]]; then
+            echo "Could not parse revision from release version ${RELEASE_VERSION}" >&2
+            exit 1
+          fi
+          aio_track="aio-v${release_revision}"
           gh workflow run "CI / Sure-AIO" \
             --ref main \
             -f publish_image=true \
-            -f run_smoke_test=false
-          echo "Triggered CI / Sure-AIO workflow_dispatch with publish_image=true."
+            -f run_smoke_test=false \
+            -f aio_track_override="${aio_track}"
+          echo "Triggered CI / Sure-AIO workflow_dispatch with publish_image=true and aio_track_override=${aio_track}."

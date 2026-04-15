@@ -27,6 +27,7 @@ Every `main` build publishes:
 4. Trigger **Release / Sure-AIO** from `main` again with `action=publish`.
 5. The workflow reads the merged `CHANGELOG.md` entry, creates the Git tag, and publishes the GitHub Release.
 6. The same publish job automatically dispatches **CI / Sure-AIO** (`workflow_dispatch`) with `publish_image=true` so GHCR package tags (including `upstream-aio-vN`) stay aligned with the new release revision.
+   It now passes an explicit `aio_track_override` derived from the release version (for example `v0.6.9-aio.3` -> `aio-v3`) to prevent tag drift.
 
 ## One-dispatch mode
 
@@ -40,5 +41,5 @@ You can run the same workflow with `action=full` for one-dispatch orchestration:
 
 Notes:
 
-- `action=full` requires `auto_merge_release_pr=true` (default).
-- If branch protection/policy blocks auto-merge, the workflow fails with a clear message and no partial hidden state.
+- `action=full` defaults `auto_merge_release_pr=true` and will attempt GitHub auto-merge first.
+- If repository auto-merge is disabled, the workflow automatically falls back to direct merge polling and proceeds once required checks/policies allow merge.

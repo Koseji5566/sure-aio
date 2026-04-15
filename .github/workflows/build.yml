@@ -33,6 +33,11 @@ on:
         required: false
         default: false
         type: boolean
+      aio_track_override:
+        description: "Optional package line override (example: aio-v3)"
+        required: false
+        default: ""
+        type: string
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -291,26 +296,32 @@ jobs:
 
       - name: Compute image tags
         id: prep
+        env:
+          AIO_TRACK_OVERRIDE: ${{ github.event_name == 'workflow_dispatch' && inputs.aio_track_override || '' }}
         run: |
           image="$(printf '%s' "${REGISTRY}/${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')"
           sha_tag="${image}:sha-${GITHUB_SHA}"
           raw_version="$(sed -n 's/^ARG UPSTREAM_VERSION=//p' Dockerfile | head -n1)"
           upstream_version="${raw_version%%@*}"
           upstream_digest="$(sed -n 's/^ARG UPSTREAM_IMAGE_DIGEST=//p' Dockerfile | head -n1)"
-          changelog_version="$(python3 scripts/release.py latest-changelog-version 2>/dev/null || true)"
-          aio_revision=""
-          case "${changelog_version}" in
-            "${upstream_version}"-aio.*)
-              candidate_revision="${changelog_version##*.}"
-              if [[ "${candidate_revision}" =~ ^[0-9]+$ ]]; then
-                aio_revision="${candidate_revision}"
-              fi
-              ;;
-          esac
-          if [[ -n "${aio_revision}" ]]; then
-            aio_track="aio-v${aio_revision}"
+          if [[ -n "${AIO_TRACK_OVERRIDE}" ]]; then
+            aio_track="${AIO_TRACK_OVERRIDE}"
           else
-            aio_track="aio-v1"
+            changelog_version="$(python3 scripts/release.py latest-changelog-version 2>/dev/null || true)"
+            aio_revision=""
+            case "${changelog_version}" in
+              "${upstream_version}"-aio.*)
+                candidate_revision="${changelog_version##*.}"
+                if [[ "${candidate_revision}" =~ ^[0-9]+$ ]]; then
+                  aio_revision="${candidate_revision}"
+                fi
+                ;;
+            esac
+            if [[ -n "${aio_revision}" ]]; then
+              aio_track="aio-v${aio_revision}"
+            else
+              aio_track="aio-v1"
+            fi
           fi
 
           {

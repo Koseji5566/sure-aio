@@ -176,12 +176,20 @@ jobs:
       - name: Trigger image publish workflow
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ steps.version.outputs.release_version }}
         run: |
+          release_revision="${RELEASE_VERSION##*.}"
+          if [[ ! "${release_revision}" =~ ^[0-9]+$ ]]; then
+            echo "Could not parse revision from release version ${RELEASE_VERSION}" >&2
+            exit 1
+          fi
+          aio_track="aio-v${release_revision}"
           gh workflow run "CI / Sure-AIO" \
             --ref main \
             -f publish_image=true \
-            -f run_smoke_test=false
-          echo "Triggered CI / Sure-AIO workflow_dispatch with publish_image=true."
+            -f run_smoke_test=false \
+            -f aio_track_override="${aio_track}"
+          echo "Triggered CI / Sure-AIO workflow_dispatch with publish_image=true and aio_track_override=${aio_track}."
 
   full-release:
     if: ${{ github.event.inputs.action == 'full' && github.ref == 'refs/heads/main' }}
@@ -400,9 +408,17 @@ jobs:
       - name: Trigger image publish workflow
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ steps.version.outputs.release_version }}
         run: |
+          release_revision="${RELEASE_VERSION##*.}"
+          if [[ ! "${release_revision}" =~ ^[0-9]+$ ]]; then
+            echo "Could not parse revision from release version ${RELEASE_VERSION}" >&2
+            exit 1
+          fi
+          aio_track="aio-v${release_revision}"
           gh workflow run "CI / Sure-AIO" \
             --ref main \
             -f publish_image=true \
-            -f run_smoke_test=false
-          echo "Triggered CI / Sure-AIO workflow_dispatch with publish_image=true."
+            -f run_smoke_test=false \
+            -f aio_track_override="${aio_track}"
+          echo "Triggered CI / Sure-AIO workflow_dispatch with publish_image=true and aio_track_override=${aio_track}."

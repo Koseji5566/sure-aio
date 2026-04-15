@@ -1,4 +1,5 @@
 [upstream]
+# Note: keep this file as the canonical upstream pin source for release/tag automation.
 name = "Sure"
 type = "github-tag"
 repo = "we-promise/sure"

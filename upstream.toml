@@ -12,4 +12,5 @@ strategy = "pr"
 stable_only = true
 
 [notifications]
+# Keep this file under source control for manual/forced republish triggers when registry parity needs repair.
 release_notes_url = "https://github.com/we-promise/sure/releases"

